@@ -10,6 +10,7 @@ beautiful = require("beautiful")
 -- Notification library
 naughty = require("naughty")
 menubar = require("menubar")
+require("hostname")
 naughty.config.presets.normal.opacity = 0.8
 naughty.config.presets.low.opacity = 0.8
 naughty.config.presets.critical.opacity = 0.8
@@ -37,11 +38,9 @@ do
     end)
 end
 -- }}}
-
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/share/awesome/themes/default/theme.lua")
-
+beautiful.init("/usr/share/awesome/themes/1337/theme.lua") --change this
 -- This is used later as the default terminal and editor to run.
 terminal = "xterm -rv -en UTF-8"
 editor = os.getenv("EDITOR") or "vim"
@@ -93,7 +92,7 @@ end
 -- {{{ Menu
 -- Create a laucher widget and a main menu
 icodir = "/usr/share/icons/hicolor/32x32/apps/"
-kuhler ={
+kuhler ={--ignore aaaaaallll this shit.
 	colors = {
 		high= "-r255",
 		low = "-g255 -b255",
@@ -149,7 +148,8 @@ myawesomemenu = {
    { "wallpapers",
    	{ 
 		{"tron", function () wpdir="/home/aaron/wallpapers/tron"; loadwps() end},
-		{"5760x1080", function () wpdir="/home/aaron/wallpapers/5760x1080"; loadwps() end},
+		{"5760x1080", function () wpdir="/home/aaron/wallpapers/5760x1080"; loadwps() end}, --change these to set wallpaper sets on the fly
+		{"misc", function () wpdir="/home/aaron/wallpapers/misc"; loadwps() end}, --change these to set wallpaper sets on the fly
 	}
 	},
    { "manual", terminal .. " -e man awesome" },
@@ -175,7 +175,8 @@ myappmenu = {
 	{ "visualizer", "xterm -rv -e ncmpcpp -s visualizer", "/usr/share/icons/oxygen/32x32/actions/view-media-visualization.png"},
 	{ "Gparted", "gksudo gparted", icodir .. "gparted.png"},
 	{ "Calculator", "xcalc", icodir .. "../../../oxygen/32x32/apps/accessories-calculator.png"},
-	{ "Libreoffice", "libreoffice", icodir .. "libreoffice-main.png"}
+	{ "Libreoffice", "libreoffice", icodir .. "libreoffice-main.png"},
+	{ "Minecraft", "minecraft"}
 }
 pbicodir="/usr/share/icons/gnome/32x32/actions/"
 playbackmenu = {
@@ -224,19 +225,28 @@ mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesom
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
-wpdir="/home/aaron/wallpapers/5760x1080/"
+wpdir="/home/aaron/wallpapers/5760x1080/" --set this to a directory containing wallpapers. I'll send you details on the directory structure.
 altwpf = io.popen("ls " .. wpdir )
 safewpstate=true
 wptable={}
 wpdexs=1
-wpdex=5
+wpdex=9
 uhdex=1
+--{{ LAPTOP EXCLUSIVE KEYS
+laptopkeys=awful.util.table.join(
+	awful.key({ modkey}, "/", function() naughty.notify({text="lappykey"}) end ))
+--}}
+
+--{{ DESKTOP EXCLUSIVE KEYS
+desktopkeys=awful.util.table.join(
+	awful.key({ modkey}, "/", function() naughty.notify({text="TANKS"}) end ))
+--}}
 for str in altwpf:lines() do
 	wptable[wpdexs]=str
 	wpdexs = wpdexs + 1
 end
 wpdexs = wpdexs - 1
-function loadwps()
+function loadwps() --refresh wallpaper
 	altwpf:close()
 	    altwpf=io.popen("ls \"" .. wpdir .. "\"" )
 	    local i=1
@@ -250,14 +260,14 @@ function loadwps()
 	    end
 
 end
-safewp = "/usr/share/awesome/themes/default/background.png"
+safewp = "/usr/share/awesome/themes/1337/background.png" --change this
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
 -- {{{ Wibox
 -- Create a textclock widget
-local blingbling = require("blingbling")
+local blingbling = require("blingbling") --delete this
 calendar = blingbling.calendar()
 calendar:set_link_to_external_calendar(true)
 
@@ -348,7 +358,7 @@ mytasklist.buttons = awful.util.table.join(
                                           end))
 local vicious = require("vicious")
   -- Top widgets:
-  cpu_graph = blingbling.line_graph({ height = 18,
+  cpu_graph = blingbling.line_graph({ height = 18, --this whole thing probably won't work out of the box.
                                       width = 160,
                                       show_text = true,
                                       label = "Cpu: $percent %",
@@ -454,7 +464,9 @@ root.buttons(awful.util.table.join(
 ))
 -- }}}
 wptp=nil
-function putwp()
+bars=true 
+function putwp() --display whatever wallpaper you have selected. Most of this should work as long as you have 3 monitors.
+	--to use this, split the wallpapers into 1920x1080 pictures titled 1.jpg, 2.jpg, 3.jpg (png also works) and put them in a folder.
 		for s = 1, screen.count() do
 		    if(io.popen("ls "..(wptp or beautiful.wallpaper.."/"..s..".jpg")):read()==(wptp or beautiful.wallpaper).."/"..s..".jpg") then
 			    gears.wallpaper.maximized((wptp or beautiful.wallpaper).."/"..s..".jpg", (-s+2)%3+1, true)
@@ -501,7 +513,7 @@ globalkeys = awful.util.table.join(
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
-    awful.key({ modkey, "Shift"   }, "Return", function () awful.util.spawn("xterm -rv -e sudo su") end),
+    awful.key({ modkey, "Shift"   }, "Return", function () awful.util.spawn("xterm -rv -e sudo su") end), --very useful
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
 
@@ -516,28 +528,30 @@ globalkeys = awful.util.table.join(
 
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
     
-    -- Custom keys
+    -- Custom key
+    awful.key({	modkey,		  }, "i",     function () awful.util.spawn("xterm -rv -e sudo wicd-curses") end), --great wifi program once you get it working.
     awful.key({ modkey,		  }, "F2",    function () awful.util.spawn("firefox") end),
     awful.key({ modkey, 	  }, "F3",    function () awful.util.spawn("thunar")  end),
     awful.key({ modkey,		  }, "F4",    function () awful.util.spawn("blender") end),
-    awful.key({ modkey, 	  }, "F5",    function () awful.util.spawn("xterm -rv -e alsamixer -D hw:0") end),
-    awful.key({}, "XF86AudioPlay", 	      function () awful.util.spawn("ncmpcpp toggle") end),
+    awful.key({ modkey, 	  }, "F5",    function () awful.util.spawn("xterm -rv -e alsamixer") end),
+    awful.key({}, "XF86AudioPlay", 	      function () awful.util.spawn("ncmpcpp toggle") end), --playback controls
     awful.key({}, "XF86AudioPrev", 	      function () awful.util.spawn("ncmpcpp prev") end),
     awful.key({}, "XF86AudioNext", 	      function () awful.util.spawn("ncmpcpp next") end),
     awful.key({ modkey, "Shift"	  }, ";",     function () awful.util.spawn("xlock -mode dclock") end),
-    awful.key({ modkey,		  }, ";",     function () awful.util.spawn_with_shell("xlock -mode dclock&xset dpms force off") end),
-    awful.key({ modkey, "Shift"   }, "m",     function () awful.util.spawn("xterm -rv ncmpcpp") end),
-    awful.key({ modkey, 	  }, "v",     function () awful.util.spawn("xterm -rv  -e ncmpcpp -c .ncmpcpp/nobar") end),
-    awful.key({ modkey, "Shift"   }, "t",     function () awful.util.spawn("xterm -rv htop") end),
-    awful.key({ modkey,           }, "e",     function () awful.util.spawn("xterm -rv -e alsamixer -D equal") end),
-    awful.key({ modkey, 	  }, "q",     function () awful.util.spawn("xterm -rv -e qalc") end),
-    awful.key({ modkey,	"Shift"   }, "n",     function () awful.util.spawn("xterm -rv -e \"ssh mc@71.193.212.135\"") end),
-    awful.key({ modkey,           }, "u",     function () gears.wallpaper.maximized(beautiful.wallpaper,2,true) end),
-    awful.key({ modkey, 	  }, "s",     function () naughty.notify({text = "Current wallpaper: " .. beautiful.wallpaper .. " [" .. wpdex .. "]"}) end),
-    awful.key({ modkey, "Shift"	  }, "g",     function () for s=1, screen.count() do gears.wallpaper.maximized("/home/aaron/wallpapers/5760x1080/"..uhdex.."/"..s..".jpg", s, true) end end),
+    awful.key({ modkey,		  }, ";",     function () awful.util.spawn_with_shell("xlock -mode dclock & xset dpms force off") end), --lock and turn off screens. 
+    awful.key({ modkey, "Shift"   }, "m",     function () awful.util.spawn("xterm -rv ncmpcpp") end), --god-tier music player.
+    awful.key({ modkey, 	  }, "v",     function () awful.util.spawn("xterm -rv  -e ncmpcpp -c .ncmpcpp/nobar") end), --you'll need an alt ncmpcpp config.
+    awful.key({ modkey, "Shift"   }, "t",     function () awful.util.spawn("xterm -rv htop") end), --definitely include this one.
+    awful.key({ modkey,           }, "e",     function () awful.util.spawn("xterm -rv -e alsamixer -D equal") end), --no longer useful
+    awful.key({ modkey, 	  }, "q",     function () awful.util.spawn("xterm -rv -e qalc") end), --install libqalculate. It's amazing.
+    awful.key({ modkey,	"Shift"   }, "n",     function () awful.util.spawn("xterm -rv -e \"ssh mc@71.193.212.135\"") end), --ssh to NCS.
+    awful.key({ modkey,           }, "u",     function () gears.wallpaper.maximized(beautiful.wallpaper,2,true) end), --don't remember what this is for.
+    awful.key({ modkey, 	  }, "s",     function () naughty.notify({text = "Current wallpaper: " .. beautiful.wallpaper .. " [" .. wpdex .. "]"}) end),--display current wallpaper
+    awful.key({ modkey, "Control" }, "s",     function () awful.util.spawn("scrot /home/aaron/scrots/scrot-fullscreen-%Y-%m-%d_%H:%M:%S.png -e \"xterm -rv -e scrotChName\"")  end),
+    awful.key({ modkey, "Shift"   }, "s",     function () awful.util.spawn_with_shell("sleep 0.2;scrot -s /home/aaron/scrots/scrot-partial-%Y-%m-%d_%H:%M:%S.png -e \"xterm -rv -e scrotChName\"")  end), --let me know if you want scrotChName script.
     awful.key({ modkey, "Control" }, ";",     function () awful.util.spawn("setxkbmap us") end),
-    awful.key({ modkey, "Control" }, "z",     function () awful.util.spawn("setxkbmap dvorak") end),
-    awful.key({ modkey, "Shift"   }, "p",     function () 
+    awful.key({ modkey, "Control" }, "z",     function () awful.util.spawn("setxkbmap dvorak") end), --keymap stuff
+    awful.key({ modkey, "Shift"   }, "p",     function () --toggle between wallpaper list and default wallpaper
 	    if safewpstate == true then
 		    if wpdex == -1 then
 			    wpdex = wpdex + 1
@@ -545,53 +559,28 @@ globalkeys = awful.util.table.join(
 		    beautiful.wallpaper = altwp or wpdir .. "/" .. wptable[wpdex+1]
 		    safewpstate = false
 	    else
-		    beautiful.wallpaper = safewp or "/usr/share/awesome/themes/default/background.png"
+		    beautiful.wallpaper = safewp or "/usr/share/awesome/themes/1337/background.png"
 		    safewpstate = true
 	    end
-	    --wptp=beautiful.wallpaper
 		putwp()
-	  --[[  for s = 1, screen.count() do
-		    if(io.popen("ls "..beautiful.wallpaper.."/"..s..".jpg"):read()==beautiful.wallpaper.."/"..s..".jpg") then
-			    gears.wallpaper.maximized(beautiful.wallpaper.."/"..s..".jpg", (s)%3+1, true)
-		    else
-		    	gears.wallpaper.maximized(beautiful.wallpaper, s, true)
-		end
-	    end]]--
-    end
+	 end
     ),
     awful.key({ modkey, "Control"   }, "w",	function ()
-	    --[[altwpf:close()
-	    altwpf=io.popen("ls \"" .. wpdir .. "\"" )
-	    local i=1
-	    for str in altwpf:lines() do
-		    wptable[i]=str
-		    i = i + 1
-		    wpdexs=i-1
-	    end
-	    if wpdex > wpdexs then
-		    wpdex=0
-	    end]]
-	    loadwps()
+	   loadwps()--reload wallpaper set after change
     end),
 
     awful.key({ modkey, "Control"   }, "p",     function ()
 	    safewpstate = false
 	    wpdex=(wpdex+1)%(wpdexs)
-	    --[[for s = 1, screen.count() do
-		    gears.wallpaper.maximized(wpdir.."/"..wptable[wpdex+1], s, true)
-	    end]]
 	   beautiful.wallpaper=wpdir.."/"..wptable[wpdex+1]
-	   putwp()
+	   putwp()--display next wallpaper
     end
     ),
     awful.key({ modkey, "Control", "Shift" }, "p",     function ()
 	    safewpstate = false
 	    wpdex=(wpdex+wpdexs-1)%(wpdexs)
-	    --[[for s = 1, screen.count() do
-		    gears.wallpaper.maximized(wpdir.."/"..wptable[wpdex+1], s, true)
-	    end]]
-		 beautiful.wallpaper=wpdir.."/"..wptable[wpdex+1]
-		 putwp()
+	    beautiful.wallpaper=wpdir.."/"..wptable[wpdex+1]
+		 putwp()--display previous wallpaper
 
     end
     ),
@@ -610,11 +599,13 @@ globalkeys = awful.util.table.join(
 )
 
 clientkeys = awful.util.table.join(
+    awful.key({ modkey, 	  }, "b",      function (c) awful.titlebar.toggle(c,top) end),--useful. Toggles bars on windows.
     awful.key({ modkey,           }, "f",      function (c) c.fullscreen = not c.fullscreen  end),
     awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
-    awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        ),
+    awful.key({ modkey,           }, "o",      function (c) awful.client.movetoscreen(c,c.screen-1)        end),
+    awful.key({ modkey, "Shift"	  }, "o",      function (c) awful.client.movetoscreen(c,c.screen+1) end),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end),
     awful.key({ modkey,           }, "n",
         function (c)
@@ -665,7 +656,11 @@ for i = 1, 9 do
                       end
                   end))
 end
-
+if hostname=="archtank" then
+	globalkeys=awful.util.table.join(globalkeys, desktopkeys)
+elseif hostname=="archtop" then
+	globalkeys=awful.util.table.join(globalkeys, laptopkeys)
+end
 clientbuttons = awful.util.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
@@ -705,7 +700,7 @@ awful.rules.rules = {
     { rule = { class = "conky" },
       properties = { floating = true, border_width = 0 } },
     { rule = { class = "XTerm" },
-      properties = { opacity = 0.70 } },
+      properties = { opacity = 0.70 } }, --This is where xterm gets its transparency.
     -- Set Firefox to always map on tags number 2 of screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { tag = tags[1][2] } },
@@ -735,7 +730,7 @@ client.connect_signal("manage", function (c, startup)
         end
     end
 
-    local titlebars_enabled = false
+    local titlebars_enabled = bars 
     if titlebars_enabled and (c.type == "normal" or c.type == "dialog") then
         -- buttons for the titlebar
         local buttons = awful.util.table.join(
@@ -758,11 +753,11 @@ client.connect_signal("manage", function (c, startup)
 
         -- Widgets that are aligned to the right
         local right_layout = wibox.layout.fixed.horizontal()
-        right_layout:add(awful.titlebar.widget.floatingbutton(c))
-        right_layout:add(awful.titlebar.widget.maximizedbutton(c))
-        right_layout:add(awful.titlebar.widget.stickybutton(c))
-        right_layout:add(awful.titlebar.widget.ontopbutton(c))
-        right_layout:add(awful.titlebar.widget.closebutton(c))
+        right_layout:add(awful.titlebar.widget.floatingbutton(c)) --arrow
+        right_layout:add(awful.titlebar.widget.maximizedbutton(c)) --rocket
+        right_layout:add(awful.titlebar.widget.stickybutton(c)) --plus
+        right_layout:add(awful.titlebar.widget.ontopbutton(c)) --star
+        right_layout:add(awful.titlebar.widget.closebutton(c)) --X
 
         -- The title goes in the middle
         local middle_layout = wibox.layout.flex.horizontal()
@@ -778,6 +773,7 @@ client.connect_signal("manage", function (c, startup)
         layout:set_middle(middle_layout)
 
         awful.titlebar(c):set_widget(layout)
+	awful.titlebar.hide(c,top)
     end
 end)
 
