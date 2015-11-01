@@ -180,12 +180,12 @@ myappmenu = {
 }
 pbicodir="/usr/share/icons/gnome/32x32/actions/"
 playbackmenu = {
-	{ "toggle", "ncmpcpp toggle"},
-	{ "play", "ncmpcpp play", pbicodir .. "media-playback-start.png"},
-	{ "pause", "ncmpcpp pause", pbicodir .. "gtk-media-pause.png"},
-	{ "skip", "ncmpcpp next", pbicodir .. "stock_media-next.png"},
-	{ "skip back", "ncmpcpp prev", pbicodir .. "gtk-media-previous-ltr.png"},
-	{ "stop", "ncmpcpp stop", pbicodir .. "stock_media-stop.png" }
+	{ "toggle", "mpc toggle"},
+	{ "play", "mpc play", pbicodir .. "media-playback-start.png"},
+	{ "pause", "mpc pause", pbicodir .. "gtk-media-pause.png"},
+	{ "skip", "mpc next", pbicodir .. "stock_media-next.png"},
+	{ "skip back", "mpc prev", pbicodir .. "gtk-media-previous-ltr.png"},
+	{ "stop", "mpc stop", pbicodir .. "stock_media-stop.png" }
 }
 powermenu = {
 	{ "shutdown", "systemctl poweroff"},
@@ -230,7 +230,7 @@ altwpf = io.popen("ls " .. wpdir )
 safewpstate=true
 wptable={}
 wpdexs=1
-wpdex=9
+wpdex=10
 uhdex=1
 --{{ LAPTOP EXCLUSIVE KEYS
 laptopkeys=awful.util.table.join(
@@ -534,23 +534,26 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, 	  }, "F3",    function () awful.util.spawn("thunar")  end),
     awful.key({ modkey,		  }, "F4",    function () awful.util.spawn("blender") end),
     awful.key({ modkey, 	  }, "F5",    function () awful.util.spawn("xterm -rv -e alsamixer") end),
-    awful.key({}, "XF86AudioPlay", 	      function () awful.util.spawn("ncmpcpp toggle") end), --playback controls
-    awful.key({}, "XF86AudioPrev", 	      function () awful.util.spawn("ncmpcpp prev") end),
-    awful.key({}, "XF86AudioNext", 	      function () awful.util.spawn("ncmpcpp next") end),
+    awful.key({ modkey, 	  }, "F6",    function () awful.util.spawn("thunderbird") end),
+    awful.key({}, "XF86AudioPlay", 	      function () awful.util.spawn("mpc toggle") end), --playback controls
+    awful.key({}, "XF86AudioPrev", 	      function () awful.util.spawn("mpc prev") end),
+    awful.key({}, "XF86AudioNext", 	      function () awful.util.spawn("mpc next") end),
     awful.key({ modkey, "Shift"	  }, ";",     function () awful.util.spawn("xlock -mode dclock") end),
     awful.key({ modkey,		  }, ";",     function () awful.util.spawn_with_shell("xlock -mode dclock & xset dpms force off") end), --lock and turn off screens. 
-    awful.key({ modkey, "Shift"   }, "m",     function () awful.util.spawn("xterm -rv ncmpcpp") end), --god-tier music player.
-    awful.key({ modkey, 	  }, "v",     function () awful.util.spawn("xterm -rv  -e ncmpcpp -c .ncmpcpp/nobar") end), --you'll need an alt ncmpcpp config.
-    awful.key({ modkey, "Shift"   }, "t",     function () awful.util.spawn("xterm -rv htop") end), --definitely include this one.
-    awful.key({ modkey,           }, "e",     function () awful.util.spawn("xterm -rv -e alsamixer -D equal") end), --no longer useful
-    awful.key({ modkey, 	  }, "q",     function () awful.util.spawn("xterm -rv -e qalc") end), --install libqalculate. It's amazing.
-    awful.key({ modkey,	"Shift"   }, "n",     function () awful.util.spawn("xterm -rv -e \"ssh mc@71.193.212.135\"") end), --ssh to NCS.
-    awful.key({ modkey,           }, "u",     function () gears.wallpaper.maximized(beautiful.wallpaper,2,true) end), --don't remember what this is for.
+    awful.key({ modkey, 	  }, "c",     function () awful.util.spawn("xterm -rv calcurse") end),
+    awful.key({ modkey, "Shift"   }, "m",     function () awful.util.spawn("xterm -rv ncmpcpp") end), 
+    awful.key({ modkey, 	  }, "v",     function () awful.util.spawn("xterm -rv  -e ncmpcpp -c .ncmpcpp/nobar") end), 
+    awful.key({ modkey, "Shift"   }, "t",     function () awful.util.spawn("xterm -rv htop") end), 
+    awful.key({ modkey,           }, "e",     function () awful.util.spawn("xterm -rv -e alsamixer -D equal") end),
+    awful.key({ modkey, 	  }, "q",     function () awful.util.spawn("xterm -rv -e qalc") end), 
+    awful.key({ modkey,	"Shift"   }, "n",     function () awful.util.spawn("xterm -rv -e \"ssh mc@192.168.1.26\"") end), --ssh to NCS.
+    awful.key({ modkey,           }, "u",     function () gears.wallpaper.maximized(beautiful.wallpaper,2,true) end), 
     awful.key({ modkey, 	  }, "s",     function () naughty.notify({text = "Current wallpaper: " .. beautiful.wallpaper .. " [" .. wpdex .. "]"}) end),--display current wallpaper
-    awful.key({ modkey, "Control" }, "s",     function () awful.util.spawn("scrot /home/aaron/scrots/scrot-fullscreen-%Y-%m-%d_%H:%M:%S.png -e \"xterm -rv -e scrotChName\"")  end),
-    awful.key({ modkey, "Shift"   }, "s",     function () awful.util.spawn_with_shell("sleep 0.2;scrot -s /home/aaron/scrots/scrot-partial-%Y-%m-%d_%H:%M:%S.png -e \"xterm -rv -e scrotChName\"")  end), --let me know if you want scrotChName script.
+    awful.key({ modkey, "Control" }, "x",     function () awful.util.spawn_with_shell("pkill xcompmgr; xcompmgr") end),
+    awful.key({ modkey, "Control" }, "s",     function () awful.util.spawn("scrot /home/aaron/scrots/scrot-fullscreen-%Y-%m-%d_%H:%M:%S.png -e \"xterm -rv -e scrotChName \\$n\"")  end),
+    awful.key({ modkey, "Shift"   }, "s",     function () awful.util.spawn_with_shell("sleep 0.2;scrot -s /home/aaron/scrots/scrot-partial-%Y-%m-%d_%H:%M:%S.png -e \"xterm -rv -e scrotChName \\$n\"")  end), 
     awful.key({ modkey, "Control" }, ";",     function () awful.util.spawn("setxkbmap us") end),
-    awful.key({ modkey, "Control" }, "z",     function () awful.util.spawn("setxkbmap dvorak") end), --keymap stuff
+    awful.key({ modkey, "Control" }, "z",     function () awful.util.spawn("setxkbmap dvorak") end), --switch keymap between dvorak and qwerty
     awful.key({ modkey, "Shift"   }, "p",     function () --toggle between wallpaper list and default wallpaper
 	    if safewpstate == true then
 		    if wpdex == -1 then
@@ -789,5 +792,5 @@ function run_once(cmd)
         awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
 end
 --run_once("qjackctl")
-run_once("volti")
+run_once("volumeicon")
 -- }}}
